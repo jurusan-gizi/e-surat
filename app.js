@@ -257,7 +257,7 @@
           ${j.isian.map(htmlIsian).join('')}
           <p class="pesan" id="pesan-form" hidden></p>
           <div class="aksi">
-            <button type="submit" class="btn utama" id="btn-buat">📄 Buat & unduh .docx</button>
+            <button type="submit" class="btn utama" id="btn-buat">👁 Pratinjau surat</button>
             <button type="button" class="btn kedua" id="btn-draf">Simpan draf</button>
           </div>
         </form>
@@ -268,7 +268,7 @@
     $isi.querySelectorAll('[data-pola]').forEach((b) => { b.onclick = () => pakaiPola(j.pola[Number(b.dataset.pola)]); });
     j.isian.forEach(pasangIsian);
     aturTampil();
-    document.getElementById('form').onsubmit = (e) => { e.preventDefault(); buat(); };
+    document.getElementById('form').onsubmit = (e) => { e.preventDefault(); pratinjau(); };
     document.getElementById('btn-draf').onclick = simpanDraf;
     if (F.hasil) tampilHasil();
   }
@@ -295,13 +295,13 @@
     }
     if (f.tipe === 'teks') {
       const dl = f.saran ? `<datalist id="${id}-dl">${f.saran.map((s) => `<option value="${esc(s)}">`).join('')}</datalist>` : '';
-      badan = `<input type="text" id="${id}" value="${esc(v)}" ${f.saran ? `list="${id}-dl"` : ''} autocomplete="off">${dl}`;
+      badan = `<input type="text" id="${id}" value="${esc(v)}" ${f.saran ? `list="${id}-dl"` : ''} ${f.contoh ? `placeholder="${esc(f.contoh)}"` : ''} autocomplete="off">${dl}`;
     } else if (f.tipe === 'tanggal') {
       badan = `<input type="date" id="${id}" value="${esc(v)}">`;
     } else if (f.tipe === 'pilih') {
       badan = `<select id="${id}">${f.opsi.map((o) => { const [val, teks] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(val)}" ${v === val ? 'selected' : ''}>${esc(teks)}</option>`; }).join('')}</select>`;
     } else if (f.tipe === 'area' || f.tipe === 'daftar' || f.tipe === 'rinci') {
-      badan = `<textarea id="${id}" rows="${f.baris || 4}" spellcheck="false">${esc(v)}</textarea>`;
+      badan = `<textarea id="${id}" rows="${f.baris || 4}" spellcheck="false" ${f.contoh ? `placeholder="${esc(f.contoh)}"` : ''}>${esc(v)}</textarea>`;
     } else if (f.tipe === 'tabel') {
       badan = `<div class="tabel-isian" id="${id}"></div><div class="alat"><button type="button" class="btn kedua kecil" data-tambah="${f.id}">+ Tambah baris</button></div>`;
     }
@@ -329,7 +329,7 @@
   function pasangIsian(f) {
     if (f.tipe === 'info') return;
     const el = document.getElementById('f-' + f.id);
-    const ubah = () => { F.kotor = true; F.hasil = null; bersihSalah(f.id); };
+    const ubah = () => { F.kotor = true; F.hasil = null; F.siap = null; bersihSalah(f.id); };
     if (f.tipe === 'tabel') {
       gambarTabel(f);
       $isi.querySelector(`[data-tambah="${f.id}"]`).onclick = () => { F.v[f.id].push({}); ubah(); gambarTabel(f, true); };
@@ -462,10 +462,9 @@
     finally { btn.disabled = false; btn.innerHTML = label; }
   }
 
-  async function buat() {
+  /** Langkah 1: susun surat lalu tampilkan pratinjaunya. Belum ada yang diunduh. */
+  async function pratinjau() {
     if (!periksaForm(true)) return;
-    const sisa = S.sisaKurung(F.v);
-    if (sisa.length && !confirm('Masih ada bagian dalam kurung siku yang belum diganti:\n\n' + sisa.slice(0, 8).join('\n') + (sisa.length > 8 ? '\n…' : '') + '\n\nTetap buat suratnya?')) return;
     const btn = document.getElementById('btn-buat');
     const label = btn.innerHTML;
     btn.disabled = true; btn.innerHTML = '<span class="putar kecil"></span> Menyusun…';
@@ -473,16 +472,65 @@
       const j = F.j;
       const data = j.susun(F.v, { tahun: new Date().getFullYear() });
       const blob = await renderDocx(j.templat(F.v), data);
-      unduh(blob, S.namaFile(j, F.v));
-      let tersimpan = true;
-      try { await simpanArsip(); } catch (e) { tersimpan = false; }
-      F.hasil = { tersimpan, blob, nama: S.namaFile(j, F.v) };
-      tampilHasil();
+      F.siap = { blob, data, nama: S.namaFile(j, F.v) };
+      await bukaPratinjau();
     } catch (e) {
-      pesanForm('Gagal membuat surat: ' + (e && e.message ? e.message : e));
+      pesanForm('Gagal menyusun surat: ' + (e && e.message ? e.message : e));
     } finally {
       btn.disabled = false; btn.innerHTML = label;
     }
+  }
+
+  async function bukaPratinjau() {
+    tutupPratinjau();
+    const sisa = S.sisaKurung(F.v);
+    const el = document.createElement('div');
+    el.id = 'pratinjau';
+    el.className = 'pratinjau';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-label', 'Pratinjau surat');
+    el.innerHTML = `
+      <div class="pratinjau-bar">
+        <button type="button" class="btn kedua kecil" id="pv-edit">← Edit lagi</button>
+        <span class="pratinjau-judul">Pratinjau · ${esc(F.j.nama)}</span>
+        <button type="button" class="btn utama kecil" id="pv-unduh">⬇ Unduh .docx</button>
+      </div>
+      <div class="pratinjau-isi">
+        ${sisa.length ? `<p class="peringatan pv-catatan"><b>Masih ada bagian dalam kurung siku yang belum diganti:</b> ${esc(sisa.slice(0, 8).join(' · '))}${sisa.length > 8 ? ' …' : ''}</p>` : ''}
+        <p class="pv-catatan bantu">Periksa isinya dulu. Bagian berwarna abu-abu seperti <span class="pv-var">\${nomor_naskah}</span> memang dibiarkan — SRIKANDI yang mengisinya. Ini pratinjau <b>isi</b>; margin, jenis huruf, dan jarak di file Word mengikuti template resmi.</p>
+        <div id="pv-dok" class="pv-dok"></div>
+      </div>`;
+    document.body.appendChild(el);
+    document.body.classList.add('ada-pratinjau');
+    document.getElementById('pv-edit').onclick = tutupPratinjau;
+    document.getElementById('pv-unduh').onclick = unduhSurat;
+    document.addEventListener('keydown', escPratinjau);
+    document.getElementById('pv-dok').innerHTML = window.PRATINJAU.buat(F.j.kode, F.siap.data, F.v);
+    document.getElementById('pv-unduh').focus();
+  }
+
+  function escPratinjau(e) { if (e.key === 'Escape') tutupPratinjau(); }
+  function tutupPratinjau() {
+    const el = document.getElementById('pratinjau');
+    if (el) el.remove();
+    document.body.classList.remove('ada-pratinjau');
+    document.removeEventListener('keydown', escPratinjau);
+  }
+
+  /** Langkah 2: unduh file yang sudah dipratinjau, lalu simpan isian ke arsip. */
+  async function unduhSurat() {
+    if (!F || !F.siap) return;
+    const sisa = S.sisaKurung(F.v);
+    if (sisa.length && !confirm('Masih ada bagian dalam kurung siku yang belum diganti:\n\n' + sisa.slice(0, 8).join('\n') + (sisa.length > 8 ? '\n…' : '') + '\n\nTetap unduh suratnya?')) return;
+    const btn = document.getElementById('pv-unduh');
+    if (btn) btn.disabled = true;
+    unduh(F.siap.blob, F.siap.nama);
+    let tersimpan = true;
+    try { await simpanArsip(); } catch (e) { tersimpan = false; }
+    F.hasil = { tersimpan, blob: F.siap.blob, nama: F.siap.nama };
+    tutupPratinjau();
+    tampilHasil();
   }
 
   async function renderDocx(templat, data) {

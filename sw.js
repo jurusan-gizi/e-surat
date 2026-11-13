@@ -1,9 +1,9 @@
 /* Service worker e-Surat Gizi – menyimpan aplikasi & template agar tetap bisa dibuka saat sinyal lemah */
-var VERSION = 'esurat-v2';
+var VERSION = 'esurat-v3';
 var SHELL = [
-  './', 'index.html', 'style.css', 'config.js', 'jenis.js', 'app.js', 'manifest.webmanifest',
+  './', 'index.html', 'style.css', 'config.js', 'jenis.js', 'pratinjau.js', 'app.js', 'manifest.webmanifest',
   'vendor/pizzip.min.js', 'vendor/docxtemplater.js',
-  'icons/icon-192.png', 'icons/icon-512.png',
+  'icons/icon-192.png', 'icons/icon-512.png', 'icons/kop.png',
   'templates/surat-dinas.docx', 'templates/nota-dinas.docx', 'templates/surat-tugas.docx',
   'templates/surat-keterangan.docx', 'templates/surat-pengantar.docx',
   'templates/surat-keputusan.docx', 'templates/surat-keputusan-tanpa-lampiran.docx', 'templates/notula-rapat.docx'

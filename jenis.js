@@ -95,10 +95,11 @@
     bantu: 'Centang hanya bila demikian — baris NIP di bawah nama akan ditampilkan. Bila tidak, baris NIP dihapus.'
   };
   var F_TEMBUSAN = {
-    id: 'tembusan', label: 'Tembusan', tipe: 'daftar', baris: 3,
+    id: 'tembusan', label: 'Tembusan', tipe: 'daftar', baris: 3, contoh: 'mis. Direktur Poltekkes Kemenkes Makassar',
     bantu: 'Satu baris satu tembusan. Kosongkan bila tidak ada. Nomor urut diatur otomatis (satu tembusan = tanpa nomor).'
   };
-  var F_ISI = { id: 'isi', label: 'Isi naskah', tipe: 'area', baris: 10, wajib: true, bantu: PETUNJUK_ISI };
+  var F_ISI = { id: 'isi', label: 'Isi naskah', tipe: 'area', baris: 10, wajib: true, bantu: PETUNJUK_ISI,
+    contoh: 'Tulis isi surat di sini, atau pilih salah satu “Pola siap pakai” di atas supaya kerangkanya terisi.\n\nContoh:\nSehubungan dengan …, bersama ini kami sampaikan …\nHari/tanggal : Senin, 3 Maret 2027\nTempat : Ruang Rapat Jurusan Gizi\nDemikian kami sampaikan, atas perhatiannya kami ucapkan terima kasih.' };
 
   /* ===================== 7 JENIS NASKAH ===================== */
   var JENIS = [
@@ -241,8 +242,9 @@
         { id: 'pegawai', label: 'Pegawai yang ditugaskan', tipe: 'tabel', wajib: true, pilihPegawai: true,
           kolom: [['nama', 'Nama'], ['nip', 'NIP'], ['pangkat', 'Pangkat/gol.'], ['jabatan', 'Jabatan']],
           bantu: 'Ketik beberapa huruf nama lalu pilih dari saran — NIP, pangkat/gol., dan jabatan terisi sendiri. Bisa juga lewat pilihan “Tambah dari daftar pegawai”, atau ketik manual. Lebih dari satu orang → otomatis dibuat halaman lampiran.' },
-        { id: 'untuk', label: 'Untuk (tugas yang dilaksanakan)', tipe: 'daftar', baris: 4, wajib: true,
-          bantu: 'Satu baris satu butir tugas. Nomor urut diatur otomatis.' },
+        { id: 'untuk', label: 'Tugas yang diberikan (bagian “untuk” di surat)', tipe: 'daftar', baris: 4, wajib: true,
+          contoh: 'Contoh:\nMelaksanakan pendampingan Program … di Kabupaten … pada tanggal 20 s.d. 22 November 2026\nMelaporkan hasil pelaksanaan tugas kepada Ketua Jurusan Gizi',
+          bantu: 'Tulis tugasnya dalam kalimat lengkap: apa kegiatannya, kapan, dan di mana. Satu baris = satu butir, nomor urut otomatis. Butir absensi dan pembiayaan di bawah ini ditambahkan otomatis sebagai butir terakhir.' },
         { id: 'absen', label: 'Tambahkan butir “tidak melakukan rekam absensi datang dan/atau pulang”', tipe: 'cek', nilai: true },
         { id: 'biaya', label: 'Butir pembiayaan', tipe: 'teks',
           nilai: 'Biaya yang dikeluarkan sebagai akibat surat tugas ini menggunakan DIPA Poltekkes Kemenkes Makassar TA {tahun}.',
@@ -384,8 +386,10 @@
           nilai: 'bahwa dalam rangka [tujuan/latar belakang], perlu [tindakan];\nbahwa pegawai yang namanya tercantum dalam Keputusan ini dipandang layak dan memenuhi syarat untuk ditunjuk sebagai [kedudukan];\nbahwa berdasarkan pertimbangan sebagaimana dimaksud dalam huruf a dan huruf b, perlu menetapkan Keputusan Direktur Poltekkes Kemenkes Makassar tentang [judul keputusan];',
           bantu: 'Satu baris satu butir. Huruf a, b, c diatur otomatis.' },
         { id: 'mengingat', label: 'Mengingat', tipe: 'daftar', baris: 4, wajib: true,
+          contoh: 'Contoh:\nUndang-Undang Nomor 17 Tahun 2023 tentang Kesehatan;\nPeraturan Menteri Kesehatan Nomor … Tahun … tentang …;',
           bantu: 'Satu baris satu peraturan, akhiri dengan titik koma. Nomor diatur otomatis. Pastikan peraturan yang dicantumkan masih berlaku.' },
         { id: 'diktum', label: 'Diktum (KESATU, KEDUA, …)', tipe: 'daftar', baris: 4, wajib: true,
+          contoh: 'Contoh:\nMembentuk Panitia … dengan susunan sebagaimana tercantum dalam Lampiran Keputusan ini.\nPanitia bertugas … dan bertanggung jawab kepada Direktur melalui Ketua Jurusan Gizi.',
           bantu: 'Satu baris satu diktum. Urutan KESATU, KEDUA, dst. diatur otomatis.' },
         { id: 'diktum_akhir', label: 'Tambahkan diktum penutup baku (“Keputusan ini berlaku sejak tanggal ditetapkan …”)', tipe: 'cek', nilai: true },
         { id: 'direktur', label: 'Nama Direktur (penanda tangan)', tipe: 'teks', wajib: true, bawaan: 'direktur' },
@@ -444,9 +448,9 @@
         { id: 'waktu', label: 'Waktu', tipe: 'teks', nilai: '09.00 WITA – selesai' },
         { id: 'tempat', label: 'Tempat', tipe: 'teks', nilai: 'Ruang Rapat Jurusan Gizi' },
         { id: 'pimpinan', label: 'Pimpinan rapat', tipe: 'teks', wajib: true, bantuPegawai: 'namaJabatan' },
-        { id: 'agenda', label: 'Agenda', tipe: 'daftar', baris: 3, wajib: true },
+        { id: 'agenda', label: 'Agenda', tipe: 'daftar', baris: 3, wajib: true, contoh: 'Satu baris satu agenda, mis.:\nEvaluasi PBM semester ganjil\nPersiapan ujian akhir semester' },
         { id: 'peserta', label: 'Peserta', tipe: 'daftar', baris: 5, bantuPegawai: 'nama', bantu: 'Satu baris satu nama, atau tulis “Daftar hadir terlampir”.' },
-        { id: 'poin', label: 'Poin-poin penting dan relevan', tipe: 'daftar', baris: 6, wajib: true },
+        { id: 'poin', label: 'Poin-poin penting dan relevan', tipe: 'daftar', baris: 6, wajib: true, contoh: 'Satu baris satu poin hasil pembahasan.' },
         { id: 'rtl', label: 'Arahan / rencana tindak lanjut', tipe: 'tabel',
           kolom: [['arahan', 'Arahan/Rencana TL'], ['unit', 'Unit penanggung jawab'], ['tenggat', 'Tenggat waktu']] },
         { id: 'tempat_buat', label: 'Dibuat di', tipe: 'teks', nilai: 'Makassar' },
