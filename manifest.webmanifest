@@ -1,0 +1,16 @@
+{
+  "name": "e-Surat Gizi – Pembuat Naskah Dinas Siap SRIKANDI",
+  "short_name": "e-Surat Gizi",
+  "description": "Buat surat dinas, nota dinas, surat tugas, surat keterangan, surat pengantar, SK, dan notula (.docx) siap unggah ke SRIKANDI.",
+  "lang": "id",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f7f7",
+  "theme_color": "#00807e",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

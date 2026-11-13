@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>e-Surat Gizi · Gizi-Link</title>
+  <meta name="description" content="Pembuat naskah dinas (.docx) siap unggah ke SRIKANDI — Jurusan Gizi Poltekkes Kemenkes Makassar.">
+  <meta name="theme-color" content="#00807e">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <script src="https://jurusan-gizi.github.io/sso.js"></script>
+</head>
+<body>
+  <header class="kop">
+    <div class="kop-isi">
+      <a href="#/" class="kop-merek" aria-label="Beranda e-Surat Gizi">
+        <img src="icons/icon-192.png" alt="" width="40" height="40" class="logo">
+        <span>
+          <span class="eyebrow">Gizi-Link</span>
+          <span class="kop-judul">e-Surat Gizi</span>
+        </span>
+      </a>
+      <a class="kembali" href="https://jurusan-gizi.github.io/">← Gizi-Link</a>
+    </div>
+  </header>
+
+  <main id="isi">
+    <section class="muat"><span class="putar"></span></section>
+  </main>
+
+  <footer>
+    <p>Jurusan Gizi · Poltekkes Kemenkes Makassar</p>
+    <p>Nomor, tanggal, dan tanda tangan elektronik diisi oleh SRIKANDI saat naskah diproses.</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/pizzip.min.js"></script>
+  <script src="vendor/docxtemplater.js"></script>
+  <script src="jenis.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
