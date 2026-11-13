@@ -252,6 +252,7 @@
           <div class="pola">${j.pola.map((p, i) => `<button type="button" class="chip" data-pola="${i}">${esc(p.nama)}</button>`).join('')}</div>
           <p class="bantu">Pilih pola, lalu ganti bagian dalam [kurung siku] dengan data sebenarnya.</p>` : ''}
 
+        ${DATA.staf.length ? `<datalist id="dl-staf">${DATA.staf.map((x) => `<option value="${esc(x.nama)}">`).join('')}</datalist>` : ''}
         <form id="form" novalidate>
           ${j.isian.map(htmlIsian).join('')}
           <p class="pesan" id="pesan-form" hidden></p>
@@ -404,8 +405,22 @@
         ${f.kolom.map(([k, lab]) => `<input type="text" data-r="${i}" data-k="${k}" value="${esc(r[k])}" placeholder="${esc(lab)}" aria-label="${esc(lab)} baris ${i + 1}" autocomplete="off">`).join('')}
         <button type="button" class="ikon-btn hapus-baris" data-hapusbaris="${i}" title="Hapus baris" aria-label="Hapus baris ${i + 1}">✕</button>
       </div>`).join('');
+    const kolNama = f.kolom[0][0];
+    const pakaiStaf = !!(f.pilihPegawai && DATA.staf.length);
     el.querySelectorAll('input').forEach((inp) => {
-      inp.oninput = () => { rows[Number(inp.dataset.r)][inp.dataset.k] = inp.value; F.kotor = true; F.hasil = null; bersihSalah(f.id); };
+      const namaPegawai = pakaiStaf && inp.dataset.k === kolNama;
+      if (namaPegawai) inp.setAttribute('list', 'dl-staf');     // ketik beberapa huruf → muncul saran nama pegawai
+      inp.oninput = () => {
+        const r = rows[Number(inp.dataset.r)];
+        r[inp.dataset.k] = inp.value;
+        F.kotor = true; F.hasil = null; bersihSalah(f.id);
+        if (!namaPegawai || f.pilihPegawai === 'namaSaja') return;
+        // nama cocok dengan daftar pegawai → NIP, pangkat/gol., jabatan terisi sendiri
+        const s = DATA.staf.find((x) => x.nama.toLowerCase() === inp.value.trim().toLowerCase());
+        if (!s) return;
+        Object.assign(r, { nama: s.nama, nip: U.nipRapat(s.nip), pangkat: U.pangkatGol(s), jabatan: s.jabatan || '' });
+        inp.closest('.baris-tabel').querySelectorAll('input').forEach((x) => { x.value = r[x.dataset.k] || ''; });
+      };
     });
     el.querySelectorAll('[data-hapusbaris]').forEach((b) => {
       b.onclick = () => { rows.splice(Number(b.dataset.hapusbaris), 1); F.kotor = true; F.hasil = null; gambarTabel(f); };

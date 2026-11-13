@@ -240,7 +240,7 @@
           nilai: 'Sehubungan dengan surat [pengirim] nomor [nomor surat] tanggal [tanggal] hal [perihal], dengan ini kami menugaskan kepada:' },
         { id: 'pegawai', label: 'Pegawai yang ditugaskan', tipe: 'tabel', wajib: true, pilihPegawai: true,
           kolom: [['nama', 'Nama'], ['nip', 'NIP'], ['pangkat', 'Pangkat/gol.'], ['jabatan', 'Jabatan']],
-          bantu: 'Pilih dari daftar pegawai (data terisi otomatis) atau ketik manual. Lebih dari satu orang → otomatis dibuat halaman lampiran.' },
+          bantu: 'Ketik beberapa huruf nama lalu pilih dari saran — NIP, pangkat/gol., dan jabatan terisi sendiri. Bisa juga lewat pilihan “Tambah dari daftar pegawai”, atau ketik manual. Lebih dari satu orang → otomatis dibuat halaman lampiran.' },
         { id: 'untuk', label: 'Untuk (tugas yang dilaksanakan)', tipe: 'daftar', baris: 4, wajib: true,
           bantu: 'Satu baris satu butir tugas. Nomor urut diatur otomatis.' },
         { id: 'absen', label: 'Tambahkan butir “tidak melakukan rekam absensi datang dan/atau pulang”', tipe: 'cek', nilai: true },

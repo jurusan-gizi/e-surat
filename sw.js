@@ -1,5 +1,5 @@
 /* Service worker e-Surat Gizi – menyimpan aplikasi & template agar tetap bisa dibuka saat sinyal lemah */
-var VERSION = 'esurat-v1';
+var VERSION = 'esurat-v2';
 var SHELL = [
   './', 'index.html', 'style.css', 'config.js', 'jenis.js', 'app.js', 'manifest.webmanifest',
   'vendor/pizzip.min.js', 'vendor/docxtemplater.js',
